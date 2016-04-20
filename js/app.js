@@ -9,6 +9,9 @@ var secret;
 
 $(document).ready(function(){
 	/*--- Display information modal box ---*/
+
+    generateNumber();
+    
   	$(".what").click(function(){
     	$(".overlay").fadeIn(1000);
   	});
@@ -18,72 +21,68 @@ $(document).ready(function(){
   		$(".overlay").fadeOut(1000);
   	});
 
+    $(".new").click(function(e){
+      generateNumber()
+      $("#feedback").html("Agreed. You can do better.");
+      $("#guessList").html(" ");
+      count = 0;
+      $("#counter").html("0");
+      pastGuesses = [];
+      resetform();
+      e.preventDefault();
+    });
+
+  // Click button to log guess
+  $("#userGuess").submit(function(e) {
+    var input = $('#guessInput').val();
+    var finder = $.inArray(input, []);
+    var alreadyGuessed = include(pastGuesses,input);
+    console.log(alreadyGuessed);
+
+    if (input > 101) {
+      alert("Hey now, keep it between 1 and 100");
+    } 
+
+    else if (input % 1 !== 0){
+      alert('Try guessing a number');
+      return true;
+    }
+    else if (alreadyGuessed === true) {
+      alert("You already guessed that.");
+    }
+    else {
+      //Provide feedback
+      $("#feedback").html(thermo(input, secret));
+      $("#guessList").append("<li>" + input + "</li>");
+      pastGuesses.push(input);
+      console.log(pastGuesses);
+      console.log(finder);
+      count++;
+      $("#counter").html(count);
+    }
+    e.preventDefault();
+  });
+
     // var secret = Math.floor((Math.random() * 100) + 1);
     // console.log(secret);
 
-// Generate random number as a variable named "secret"
-function generateNumber(){
-  secret = Math.floor(Math.random()*100)+1;
-  console.log(secret);
-};
+    // Generate random number as a variable named "secret"
+    function generateNumber(){
+      secret = Math.floor(Math.random()*100)+1;
+      console.log(secret);
+    };
 
+    //Determine if number has already been guessed
+    function include(arr,obj) {
+      return (arr.indexOf(obj) != -1);
+    }
 
-generateNumber();
+    //Reset form
+    function resetform() {
+      document.getElementById("userGuess").reset();
+    }
 
-
-    $(".new").click(function(e){
-  generateNumber()
-  $("#feedback").html("Agreed. You can do better.");
-  $("#guessList").html(" ");
-  count = 0;
-  $("#counter").html("0");
-  pastGuesses = [];
-  resetform();
-  e.preventDefault();
-});
-
-// //Click button to log guess
-$("#userGuess").submit(function(e) {
-  var input = $('#guessInput').val();
-  var finder = $.inArray(input, []);
-  var alreadyGuessed = include(pastGuesses,input);
-  console.log(alreadyGuessed);
-
-  if (input > 101) {
-    alert("Hey now, keep it between 1 and 100");
-  } 
-
-  else if (input % 1 !== 0){
-        alert('Try guessing a number');
-        return true;
-      }
-  else if (alreadyGuessed === true) {
-    alert("You already guessed that.");
-  }
-  else {
-  //Provide feedback
-  $("#feedback").html(thermo(input, secret));
-  $("#guessList").append("<li>" + input + "</li>");
-  pastGuesses.push(input);
-  console.log(pastGuesses);
-  console.log(finder);
-             count++;
-             $("#counter").html(count);
-}
-  e.preventDefault();
-});
-
-//Determine if number has already been guessed
-function include(arr,obj) {
-    return (arr.indexOf(obj) != -1);
-}
-
-//Reset form
-function resetform() {
-document.getElementById("userGuess").reset();
-}
-
-// Judge whether the input number is hot or cold
+    // Judge whether the input number is hot or cold
     function thermo(x, y) {
         if (x == y) {
           return "You got it!";
